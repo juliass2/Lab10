@@ -15,7 +15,7 @@ public class EmployeeDatabase {
     /**
      * List of employees.
      */
-    public List<Employee> employees;
+    private List<Employee> employees;
 
     /**
      * Constructor which initializes the employees list.
@@ -30,10 +30,10 @@ public class EmployeeDatabase {
     /**
      * Returns the manager for the given employee.
      *
-     * @param employee
-     * @return
+     * @param employee the employee we're looking for.
+     * @return the employee under a certain manager
      */
-    Employee findManager(final Employee employee) {
+    public Employee findManager(final Employee employee) {
         Employee manager = null;
         for (int i = 0; i < employees.size(); i++) {
             if (employees.get(i).getName() == employee.getManager()) {
@@ -45,17 +45,51 @@ public class EmployeeDatabase {
     }
 
     /**
+     * Returns the employee for a given manager.
+     *
+     * @param manager the manager we're looking for.
+     * @return Employee under the manager.
+     */
+    public Employee findEmployee(final Employee manager) {
+        Employee employee = null;
+        for (int i = 0; i < employees.size(); i++) {
+            if (employees.get(i).getManager() == manager.getName()) {
+                employee = employees.get(i);
+                break;
+            }
+        }
+        return employee;
+    }
+
+    /**
      * Count the number of managers above this employee.
      * <p>
      * Consider both a recursive and an iterative solution to this problem.
      *
      * @param employee name of the employee
-     * @return int
+     * @return int the managers above this employee.
      */
     public int countManagersAbove(final Employee employee) {
         /*
          * Implement this function
          */
+        //Recursive Solution
+        Employee manager = findManager(employee);
+        if (manager == null) {
+            return 0;
+        }
+        return 1 + countManagersAbove(manager);
+
+/*
+        //Iterative solution
+        Employee manager = findManager(employee);
+        int count = 0;
+        while (manager != null) {
+            manager = findManager(manager);
+            count += 1;
+        }
+        return count;
+    */
     }
 
     /**
@@ -70,6 +104,29 @@ public class EmployeeDatabase {
         /*
          * Implement this function
          */
+        //Recursive solution
+        int count = 0;
+        for (int i = 0; i < employees.size(); i++) {
+            if (employees.get(i).getManager() == employee.getName()) {
+                count += 1 + countEmployeesUnder(employees.get(i));
+            }
+        }
+        return count;
+
+        /*
+        //iterative solution
+        int count = 0;
+        for (int i = 0; i < employees.size(); i++) {
+            Employee employeeUnder = employees.get(i);
+            if (employeeUnder.getManager() == employee.getName()) {
+                while (employeeUnder != null) {
+                    count += 1;
+                    employeeUnder = findEmployee(employeeUnder);
+                }
+            }
+        }
+        return count;
+        */
     }
 
     /**
@@ -106,29 +163,29 @@ public class EmployeeDatabase {
         System.out.println("Welcome to the employee database\n\n");
 
         // Count employees under
-        int answer = database.countEmployeesUnder(sally);
+        int answer = database.countEmployeesUnder(sally); //2
         System.out.println("Sally has " + Integer.toString(answer) + " employees under her.\n");
 
-        answer = database.countEmployeesUnder(nathan);
+        answer = database.countEmployeesUnder(nathan); //1
         System.out.println("Nathan has " + Integer.toString(answer) + " employees under him.\n");
 
-        answer = database.countEmployeesUnder(betty);
+        answer = database.countEmployeesUnder(betty); //0
         System.out.println("Betty has " + Integer.toString(answer) + " employees under her.\n");
 
-        answer = database.countEmployeesUnder(veronica);
+        answer = database.countEmployeesUnder(veronica); //2
         System.out.println("Veronica has " + Integer.toString(answer) + " employees under her.\n");
 
         // Count managers above
-        answer = database.countManagersAbove(sally);
+        answer = database.countManagersAbove(sally); //1
         System.out.println("Sally has " + Integer.toString(answer) + " managers above her.\n");
 
-        answer = database.countManagersAbove(veronica);
+        answer = database.countManagersAbove(veronica); //0
         System.out.println("Veronica has " + Integer.toString(answer) + " managers above her.\n");
 
-        answer = database.countManagersAbove(bob);
+        answer = database.countManagersAbove(bob); //2
         System.out.println("Bob has " + Integer.toString(answer) + " managers above him.\n");
 
-        answer = database.countManagersAbove(betty);
+        answer = database.countManagersAbove(betty); //4
         System.out.println("Betty has " + Integer.toString(answer) + " managers above her.\n");
     }
 }
